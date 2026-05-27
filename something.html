@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUCIVEX | Ignite The Unspoken</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Share+Tech+Mono&family=Inter:wght=200;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030108;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .font-mono-tech { font-family: 'Share Tech Mono', monospace; }
+        
+        /* Brand Glow Palette (Based on Lucivex Assets) */
+        .neon-text-purple {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 25px rgba(147, 51, 234, 0.5);
+        }
+        .neon-border-purple {
+            box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.6);
+        }
+        .bg-space-matrix {
+            background: radial-gradient(circle at 50% 30%, #0f041c 0%, #030108 75%);
+        }
+        
+        /* Outer Typography Rotation Ring */
+        @keyframes stableSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-ring-spin {
+            animation: stableSpin 25s linear infinite;
+        }
+
+        /* The Kinematic Simple Globe - Locked inside relative container unless flying */
+        #simple-flight-globe {
+            position: relative;
+            z-index: 40;
+            cursor: pointer;
+            user-select: none;
+            transform-origin: center center;
+            will-change: transform, left, top;
+        }
+
+        /* Simple Globe Wireframe Lines */
+        .globe-line-lat {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 50%;
+            top: 0; left: 0;
+            pointer-events: none;
+        }
+        .globe-line-lon {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 50%;
+            top: 0; left: 0;
+            pointer-events: none;
+        }
+
+        /* CSS Rendered Lucivex Emblem Custom Layout */
+        .lucivex-logo-mark {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lucivex-logo-mark::before, .lucivex-logo-mark::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 32px;
+            background: #a855f7;
+            box-shadow: 0 0 10px #a855f7;
+            border-radius: 2px;
+        }
+        .lucivex-logo-mark::before { transform: rotate(45deg) translateX(-6px); }
+        .lucivex-logo-mark::after { transform: rotate(-45deg) translateX(6px); }
+        .logo-star {
+            position: absolute;
+            top: 0;
+            color: #d8b4fe;
+            font-size: 10px;
+            animation: pulse 2s infinite;
+            text-shadow: 0 0 8px #a855f7;
+        }
+    </style>
+</head>
+<body class="bg-space-matrix min-h-screen relative selection:bg-purple-900 selection:text-white" onclick="deployGlobeWildflight(event)">
+
+    <div class="absolute inset-0 bg-[linear-gradient(rgba(147,51,234,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(147,51,234,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
+
+    <nav class="fixed top-0 left-0 w-full z-50 bg-[#030108]/85 backdrop-blur-md border-b border-purple-950/50 px-6 py-4 flex justify-between items-center" onclick="event.stopPropagation()">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchSection('home')">
+            <div class="lucivex-logo-mark">
+                <div class="logo-star">✦</div>
+            </div>
+            <span class="font-orbitron text-2xl font-black tracking-[0.25em] text-white neon-text-purple">LUCIVEX</span>
+        </div>
+        
+        <div class="hidden md:flex space-x-10 text-xs font-bold tracking-[0.2em] font-orbitron">
+            <a href="#" onclick="switchSection('home')" class="text-purple-400 hover:text-white transition-colors">THE HUB</a>
+            <a href="#" onclick="switchSection('ecosystem')" class="text-gray-400 hover:text-purple-300 transition-colors">LAB ECOSYSTEM</a>
+            <a href="#" onclick="switchSection('roadmap')" class="text-gray-400 hover:text-purple-300 transition-colors">STRATEGIC DISPATCH</a>
+        </div>
+
+        <div>
+            <button onclick="openLoginModal()" class="font-orbitron text-xs tracking-widest bg-purple-950/60 hover:bg-purple-800 text-white border border-purple-500/40 px-5 py-2.5 rounded transition-all neon-border-purple">
+                PORTAL ACCESS
+            </button>
+        </div>
+    </nav>
+
+    <section id="section-home" class="pt-40 pb-20 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div class="space-y-8" onclick="event.stopPropagation()">
+            <div class="inline-flex items-center space-x-3 bg-purple-950/30 border border-purple-900/50 rounded-full px-4 py-1.5">
+                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse shadow-[0_0_8px_#a855f7]"></span>
+                <span class="text-purple-300 font-orbitron text-[10px] tracking-[0.3em] font-bold">IGNITE THE UNSPOKEN</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-black text-white font-orbitron tracking-tight leading-none">
+                INTRODUCING <br><span class="text-purple-500 neon-text-purple">LUCIVEX.</span>
+            </h1>
+            
+            <p class="text-gray-400 text-lg font-light max-w-xl tracking-wide">
+                Where ideas find <span class="text-purple-400 font-medium">impact</span>. We provide an advanced, structured ecosystem engineered for uncovering, evaluating, and refining highly complex abstract models into functional physical application realities.
+            </p>
+
+            <div class="flex items-center space-x-8 pt-4 border-t border-purple-950/60 max-w-lg">
+                <div class="text-center">
+                    <div class="text-purple-400 text-xl mb-1"><i class="fa-solid fa-users-rectangle"></i></div>
+                    <p class="text-[9px] font-orbitron font-bold text-gray-500 tracking-widest uppercase">IDEATE</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-purple-400 text-xl mb-1"><i class="fa-solid fa-comments"></i></div>
+                    <p class="text-[9px] font-orbitron font-bold text-gray-500 tracking-widest uppercase">DISCUSS</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-purple-400 text-xl mb-1"><i class="fa-solid fa-handshake-angle"></i></div>
+                    <p class="text-[9px] font-orbitron font-bold text-gray-500 tracking-widest uppercase">COLLABORATE</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-purple-400 text-xl mb-1"><i class="fa-solid fa-trophy"></i></div>
+                    <p class="text-[9px] font-orbitron font-bold text-gray-500 tracking-widest uppercase">CREATE IMPACT</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-wrap gap-4 pt-4">
+                <button onclick="openRegisterModal()" class="px-8 py-4 bg-purple-800 hover:bg-purple-700 text-white font-bold font-orbitron text-xs tracking-widest rounded transition-all neon-border-purple">
+                    REGISTER ACCESS NODE
+                </button>
+                <button onclick="switchSection('ecosystem')" class="px-8 py-4 border border-purple-950 hover:border-purple-500 text-gray-300 font-bold font-orbitron text-xs tracking-widest rounded transition-all">
+                    EXPLORE ENGINE LAYERS
+                </button>
+            </div>
+        </div>
+
+        <div id="globe-docking-zone" class="relative flex justify-center items-center h-[520px] min-h-[500px]">
+            <div class="absolute w-[360px] h-[360px] md:w-[450px] md:h-[450px] animate-ring-spin flex items-center justify-center pointer-events-none opacity-80">
+                <svg viewBox="0 0 100 100" class="w-full h-full text-purple-400 fill-current font-orbitron tracking-[0.22em] text-[5.2px] font-black">
+                    <path id="textCirclePath" d="M 50,50 m -40,0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0" fill="none"/>
+                    <text><textPath href="#textCirclePath">✦ WELCOME TO LUCIVEX ✦ WELCOME TO LUCIVEX ✦ WELCOME TO LUCIVEX ✦ WELCOME TO LUCIVEX ✦ </textPath></text>
+                </svg>
+            </div>
+            
+            <div id="simple-flight-globe" class="w-64 h-64 md:w-72 md:h-72 rounded-full bg-gradient-to-br from-[#120524] via-[#04010a] to-[#200b3b] flex flex-col items-center justify-center shadow-[0_0_60px_rgba(168,85,247,0.35)] border border-purple-500/30 overflow-hidden">
+                <div class="globe-line-lat" style="transform: scaleY(0.35);"></div>
+                <div class="globe-line-lat" style="transform: scaleY(0.7);"></div>
+                <div class="globe-line-lon" style="transform: scaleX(0.35);"></div>
+                <div class="globe-line-lon" style="transform: scaleX(0.7);"></div>
+                
+                <div class="absolute w-full h-[1px] bg-purple-500/40 top-1/2 left-0 pointer-events-none"></div>
+                <div class="absolute h-full w-[1px] bg-purple-500/40 left-1/2 top-0 pointer-events-none"></div>
+
+                <div class="w-8 h-8 rounded-full bg-purple-500/20 blur-md absolute pointer-events-none"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-ecosystem" class="py-24 bg-black/40 border-y border-purple-950/40 px-6">
+        <div class="max-w-7xl mx-auto" onclick="event.stopPropagation()">
+            <div class="text-center mb-16">
+                <p class="text-purple-400 font-orbitron font-bold tracking-[0.3em] text-xs uppercase mb-2">INNOVATION HUB DEPLOYMENT</p>
+                <h2 class="text-4xl font-black font-orbitron text-white tracking-tight">THE FIVE LABORATORY LAYERS</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto mt-4 text-sm leading-relaxed">Click on an advanced infrastructure core block module to expand and inspect its telemetry controls and operational parameters.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <div onclick="toggleStructuralCard(this)" class="group cursor-pointer bg-[#090414]/80 border border-purple-950/60 p-6 rounded-xl transition-all duration-300 hover:bg-purple-950/10 hover:border-purple-500/70">
+                    <div class="w-12 h-12 rounded bg-purple-950/80 border border-purple-800/40 flex items-center justify-center mb-6 shadow-[0_0_10px_rgba(147,51,234,0.1)]">
+                        <i class="fa-solid fa-lightbulb text-purple-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-sm text-white mb-2 tracking-wider group-hover:text-purple-400 transition-colors">01 / IDEATION LAB</h3>
+                    <p class="text-xs text-gray-400 line-clamp-3 short-desc">Conceptualizing the unknown space parameters through rigorous systematic discovery.</p>
+                    <div class="hidden-desc hidden mt-4 pt-4 border-t border-purple-950/60 text-xs text-gray-300 space-y-3">
+                        <p>Our raw ingestion gateway. It catches high-potential abstract thoughts before structuring them into standard project definitions. Features patent trend evaluation matrixes and initial gap calculations.</p>
+                        <span class="text-[9px] font-mono-tech text-purple-400 block font-bold"> telemetry: initialized_standby</span>
+                    </div>
+                </div>
+                <div onclick="toggleStructuralCard(this)" class="group cursor-pointer bg-[#090414]/80 border border-purple-950/60 p-6 rounded-xl transition-all duration-300 hover:bg-purple-950/10 hover:border-purple-500/70">
+                    <div class="w-12 h-12 rounded bg-purple-950/80 border border-purple-800/40 flex items-center justify-center mb-6 shadow-[0_0_10px_rgba(147,51,234,0.1)]">
+                        <i class="fa-solid fa-brain text-purple-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-sm text-white mb-2 tracking-wider group-hover:text-purple-400 transition-colors">02 / THOUGHT DESIGN</h3>
+                    <p class="text-xs text-gray-400 line-clamp-3 short-desc">Applying structured thinking strategies to navigate highly complex modern execution bottlenecks.</p>
+                    <div class="hidden-desc hidden mt-4 pt-4 border-t border-purple-950/60 text-xs text-gray-300 space-y-3">
+                        <p>Converts loose ideas into absolute blueprints. Teams chart multi-layer visual flows, system topologies, and interactive mockups to guarantee error-free scalability mapping before development layers engage.</p>
+                        <span class="text-[9px] font-mono-tech text-purple-400 block font-bold"> telemetry: mapping_active</span>
+                    </div>
+                </div>
+                <div onclick="toggleStructuralCard(this)" class="group cursor-pointer bg-[#090414]/80 border border-purple-950/60 p-6 rounded-xl transition-all duration-300 hover:bg-purple-950/10 hover:border-purple-500/70">
+                    <div class="w-12 h-12 rounded bg-purple-950/80 border border-purple-800/40 flex items-center justify-center mb-6 shadow-[0_0_10px_rgba(147,51,234,0.1)]">
+                        <i class="fa-solid fa-sliders text-purple-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-sm text-white mb-2 tracking-wider group-hover:text-purple-400 transition-colors">03 / FEEDBACK & REFINEMENT</h3>
+                    <p class="text-xs text-gray-400 line-clamp-3 short-desc">Polishing internal logic configurations using verified community and expert panel peer reviews.</p>
+                    <div class="hidden-desc hidden mt-4 pt-4 border-t border-purple-950/60 text-xs text-gray-300 space-y-3">
+                        <p>Subjecting concepts to extensive iterative loops. Our secure network parses user telemetry, A/B validation datasets, and internal expert critiques to continually refine and optimize functional efficiency parameters.</p>
+                        <span class="text-[9px] font-mono-tech text-purple-400 block font-bold"> telemetry: filtration_stable</span>
+                    </div>
+                </div>
+                <div onclick="toggleStructuralCard(this)" class="group cursor-pointer bg-[#090414]/80 border border-purple-950/60 p-6 rounded-xl transition-all duration-300 hover:bg-purple-950/10 hover:border-purple-500/70">
+                    <div class="w-12 h-12 rounded bg-purple-950/80 border border-purple-800/40 flex items-center justify-center mb-6 shadow-[0_0_10px_rgba(147,51,234,0.1)]">
+                        <i class="fa-solid fa-magnifying-glass-chart text-purple-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-sm text-white mb-2 tracking-wider group-hover:text-purple-400 transition-colors">04 / VALIDATION NETWORK</h3>
+                    <p class="text-xs text-gray-400 line-clamp-3 short-desc">Simulated and decentralized real-world load testing arrays to output structural proof-of-concept indicators.</p>
+                    <div class="hidden-desc hidden mt-4 pt-4 border-t border-purple-950/60 text-xs text-gray-300 space-y-3">
+                        <p>Where code meets live targets. Runs algorithmic stress verification to ensure architecture models comply perfectly with high stability demands before product capitalization occurs.</p>
+                        <span class="text-[9px] font-mono-tech text-purple-400 block font-bold"> telemetry: target_verified</span>
+                    </div>
+                </div>
+                <div onclick="toggleStructuralCard(this)" class="group cursor-pointer bg-[#090414]/80 border border-purple-950/60 p-6 rounded-xl transition-all duration-300 hover:bg-purple-950/10 hover:border-purple-500/70">
+                    <div class="w-12 h-12 rounded bg-purple-950/80 border border-purple-800/40 flex items-center justify-center mb-6 shadow-[0_0_10px_rgba(147,51,234,0.1)]">
+                        <i class="fa-solid fa-rocket text-purple-400 text-lg"></i>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-sm text-white mb-2 tracking-wider group-hover:text-purple-400 transition-colors">05 / PROTOTYPE FUND</h3>
+                    <p class="text-xs text-gray-400 line-clamp-3 short-desc">Pre-seed computing allocation blocks and hardware acceleration assets reserved for approved modules.</p>
+                    <div class="hidden-desc hidden mt-4 pt-4 border-t border-purple-950/60 text-xs text-gray-300 space-y-3">
+                        <p>Unlocking final execution funding paths. Supplies developer teams with raw infrastructure acceleration, dedicated servers, and global network routing nodes to launch ideas straight into orbit.</p>
+                        <span class="text-[9px] font-mono-tech text-purple-400 block font-bold"> telemetry: asset_pool_unlocked</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-roadmap" class="py-24 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-20" onclick="event.stopPropagation()">
+            <p class="text-purple-400 font-orbitron font-bold tracking-[0.3em] text-xs uppercase mb-2">THE PIPELINE INDEX</p>
+            <h2 class="text-4xl font-black font-orbitron text-white tracking-tight">STRATEGIC DISPATCH TIMELINE</h2>
+            <p class="text-gray-500 max-w-xl mx-auto text-sm mt-4 leading-relaxed">
+                The absolute lifecycle pathway governing Lucivex modules. We systemize abstract thought blocks, clean structural bugs through strict consensus testing protocols, and anchor them onto global launch points.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative" onclick="event.stopPropagation()">
+            <div class="p-6 bg-[#090414]/40 border-t-2 border-purple-600 rounded-b-lg hover:bg-purple-950/10 hover:border-purple-400 transition-all duration-300 group">
+                <span class="font-orbitron text-purple-500 group-hover:text-purple-400 font-extrabold text-xs tracking-widest block mb-3">PHASE 01 // FRAMEWORK INGEST</span>
+                <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-2">Isolating Global Market Gaps</h4>
+                <p class="text-xs text-gray-400 leading-relaxed font-light">
+                    Every operational cycle initiates here. Lucivex algorithms evaluate unstructured text strings, technology bottlenecks, and emerging patents to define concrete engineering requirements and product-market fit metrics.
+                </p>
+            </div>
+            <div class="p-6 bg-[#090414]/40 border-t-2 border-purple-600 rounded-b-lg hover:bg-purple-950/10 hover:border-purple-400 transition-all duration-300 group">
+                <span class="font-orbitron text-purple-500 group-hover:text-purple-400 font-extrabold text-xs tracking-widest block mb-3">PHASE 02 // REFINEMENT LOOPS</span>
+                <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-2">Matrix Peer Review Screening</h4>
+                <p class="text-xs text-gray-400 leading-relaxed font-light">
+                    Blueprints pass into decentralized sandbox containers. The logic models undergo stringent evaluation parameters, strict architectural stresses, and validation testing loops to remove scalability bottlenecks before deployment.
+                </p>
+            </div>
+            <div class="p-6 bg-[#090414]/40 border-t-2 border-purple-600 rounded-b-lg hover:bg-purple-950/10 hover:border-purple-400 transition-all duration-300 group">
+                <span class="font-orbitron text-purple-500 group-hover:text-purple-400 font-extrabold text-xs tracking-widest block mb-3">PHASE 03 // DEPLOYMENT BUILD</span>
+                <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-2">Cross-Functional Agile Sprints</h4>
+                <p class="text-xs text-gray-400 leading-relaxed font-light">
+                    Approved logic maps materialize into optimized microservices. Code compilers build isolated platform nodes with absolute encryption keys, verified tracking constraints, and direct multi-region server infrastructure layers.
+                </p>
+            </div>
+            <div class="p-6 bg-[#090414]/40 border-t-2 border-purple-600 rounded-b-lg hover:bg-purple-950/10 hover:border-purple-400 transition-all duration-300 group">
+                <span class="font-orbitron text-purple-500 group-hover:text-purple-400 font-extrabold text-xs tracking-widest block mb-3">PHASE 04 // GLOBAL ANCHORING</span>
+                <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-2">Target Venture Integration</h4>
+                <p class="text-xs text-gray-400 leading-relaxed font-light">
+                    The finalized application is pushed to production vectors. Safe routing gateways unlock operational data relays, establishing permanent real-world utilities and enterprise-grade decentralized execution channels.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-contact" class="py-16 bg-black/20 border-t border-purple-950/30 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-12" onclick="event.stopPropagation()">
+            <p class="text-purple-400 font-orbitron font-bold tracking-[0.3em] text-xs uppercase mb-1">OPERATOR ENGAGEMENT NODES</p>
+            <h2 class="text-3xl font-black font-orbitron text-white tracking-tight">COMMUNITY CONTACT CHANNELS</h2>
+            <p class="text-gray-500 text-xs mt-2">Connect straight to the system core for authorized integration requests and data sync pipelines.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6" onclick="event.stopPropagation()">
+            <div class="p-5 bg-[#090414]/60 border border-purple-950/70 rounded-xl flex flex-col items-center text-center">
+                <div class="w-10 h-10 rounded-full bg-purple-950 border border-purple-800/40 flex items-center justify-center mb-4 text-purple-400 text-sm"><i class="fa-solid fa-lightbulb"></i></div>
+                <h4 class="font-orbitron font-bold text-xs text-white uppercase tracking-wider mb-1">Ideate Sync</h4>
+                <p class="text-[11px] text-gray-500 mb-3">Submit initial raw concept strings.</p>
+                <a href="mailto:lucivex.official@outlook.com" class="text-xs font-mono-tech text-purple-400 hover:underline">lucivex.official@outlook.com</a>
+            </div>
+            <div class="p-5 bg-[#090414]/60 border border-purple-950/70 rounded-xl flex flex-col items-center text-center">
+                <div class="w-10 h-10 rounded-full bg-purple-950 border border-purple-800/40 flex items-center justify-center mb-4 text-purple-400 text-sm"><i class="fa-solid fa-comments"></i></div>
+                <h4 class="font-orbitron font-bold text-xs text-white uppercase tracking-wider mb-1">Discussion Grid</h4>
+                <p class="text-[11px] text-gray-500 mb-3">Engage in peer blueprint matrix loops.</p>
+                <a href="https://instagram.com/lucivex.official" target="_blank" class="text-xs font-mono-tech text-purple-400 hover:underline">@lucivex.official</a>
+            </div>
+            <div class="p-5 bg-[#090414]/60 border border-purple-950/70 rounded-xl flex flex-col items-center text-center">
+                <div class="w-10 h-10 rounded-full bg-purple-950 border border-purple-800/40 flex items-center justify-center mb-4 text-purple-400 text-sm"><i class="fa-solid fa-handshake-angle"></i></div>
+                <h4 class="font-orbitron font-bold text-xs text-white uppercase tracking-wider mb-1">Collaboration Link</h4>
+                <p class="text-[11px] text-gray-500 mb-3">Partner on active infrastructure build outs.</p>
+                <a href="mailto:lucivex.official@outlook.com" class="text-xs font-mono-tech text-purple-400 hover:underline">lucivex.official@outlook.com</a>
+            </div>
+            <div class="p-5 bg-[#090414]/60 border border-purple-950/70 rounded-xl flex flex-col items-center text-center">
+                <div class="w-10 h-10 rounded-full bg-purple-950 border border-purple-800/40 flex items-center justify-center mb-4 text-purple-400 text-sm"><i class="fa-solid fa-trophy"></i></div>
+                <h4 class="font-orbitron font-bold text-xs text-white uppercase tracking-wider mb-1">Creating Impact</h4>
+                <p class="text-[11px] text-gray-500 mb-3">Scale production platforms globally.</p>
+                <a href="https://instagram.com/lucivex.official" target="_blank" class="text-xs font-mono-tech text-purple-400 hover:underline">@lucivex.official</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-dashboard" class="hidden pt-36 pb-24 px-6 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-purple-950 pb-6 mb-8 gap-4" onclick="event.stopPropagation()">
+            <div>
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] font-mono-tech tracking-widest text-purple-400 font-bold uppercase">AUTHORIZED WORKSPACE INTERACTION</span>
+                </div>
+                <h2 class="text-3xl font-black font-orbitron text-white mt-1">CREATOR DATA LOGS INDEX</h2>
+                <p class="text-gray-400 text-xs mt-1">Logged Profile Node: <span id="dash-user-name" class="text-purple-300 font-semibold">User</span></p>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="shareDashboardDataToGmail()" class="bg-purple-900 hover:bg-purple-800 text-white font-orbitron font-bold text-xs tracking-widest px-5 py-3 rounded transition-all shadow-md">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> SYNC TO REPOSITORY GMAIL
+                </button>
+                <button onclick="logout()" class="bg-red-950/30 border border-red-900/40 text-red-400 hover:bg-red-900 hover:text-white px-4 py-2 rounded text-xs font-bold font-orbitron tracking-widest transition-all">
+                    EXIT NODE
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-[#090414]/80 border border-purple-950 p-6 rounded-xl h-fit" onclick="event.stopPropagation()">
+                <h3 class="font-orbitron font-bold text-xs text-white tracking-widest mb-4 uppercase border-b border-purple-950 pb-2">DATA STRINGS PORT</h3>
+                <form id="personnel-form" onsubmit="addPersonnelRecord(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-orbitron font-bold text-gray-400 mb-1 tracking-widest">IDENTITY NAME</label>
+                        <input type="text" id="p-name" required class="w-full bg-black border border-purple-950 rounded px-4 py-2.5 text-white focus:outline-none focus:border-purple-600 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-orbitron font-bold text-gray-400 mb-1 tracking-widest">ASSIGNED HUB ROLE</label>
+                        <input type="text" id="p-occupation" required class="w-full bg-black border border-purple-950 rounded px-4 py-2.5 text-white focus:outline-none focus:border-purple-600 text-sm">
+                    </div>
+                    <button type="submit" class="w-full bg-purple-800 hover:bg-purple-700 text-white font-orbitron font-bold tracking-widest py-3 rounded text-xs">
+                        COMMIT STREAM LINE
+                    </button>
+                </form>
+            </div>
+
+            <div class="lg:col-span-2 bg-[#090414]/80 border border-purple-950 p-6 rounded-xl" onclick="event.stopPropagation()">
+                <h3 class="font-orbitron font-bold text-xs text-white tracking-widest mb-4 uppercase border-b border-purple-950 pb-2">ACTIVE REGISTERED LOG BLOCKS</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-purple-950 font-orbitron text-[10px] tracking-widest text-purple-400">
+                                <th class="pb-3 pl-2">OPERATOR MATRIX ID</th>
+                                <th class="pb-3">FUNCTIONAL DESIGNATION</th>
+                                <th class="pb-3">TIMESTAMP RECORD</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personnel-table-body" class="text-xs divide-y divide-purple-950/30 text-gray-300"></tbody>
+                    </table>
+                </div>
+                <div id="no-personnel-notice" class="text-center py-12 text-gray-600 text-xs font-mono-tech">
+                    [NO ACTIVE REGISTRY BLOCKS CURRENTLY COMPILED ON THIS SESSION NODE]
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-admin" class="hidden pt-36 pb-24 px-6 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-purple-950 pb-6 mb-8" onclick="event.stopPropagation()">
+            <div>
+                <h2 class="text-3xl font-black font-orbitron text-white neon-text-purple">LUCIVEX COMMAND LAYER</h2>
+                <p class="text-gray-500 text-xs font-mono-tech mt-1">[ROOT MATRIX ENTRANCE VERIFIED]</p>
+            </div>
+            <button onclick="logout()" class="bg-red-950/30 border border-red-900/40 text-red-400 hover:bg-red-900 hover:text-white px-5 py-2 rounded text-xs font-bold font-orbitron tracking-widest transition-all">
+                DISCONNECT ROOT
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12" onclick="event.stopPropagation()">
+            <div class="p-6 bg-purple-950/10 border border-purple-900/40 rounded-xl">
+                <p class="text-[10px] font-orbitron tracking-widest text-purple-400 font-bold uppercase">Total Matrix Threads</p>
+                <p id="admin-stat-accounts" class="text-4xl font-black text-white font-orbitron mt-2">0</p>
+            </div>
+            <div class="p-6 bg-purple-950/10 border border-purple-900/40 rounded-xl">
+                <p class="text-[10px] font-orbitron tracking-widest text-purple-400 font-bold uppercase">Intercepted Gate Stops</p>
+                <p id="admin-stat-pending" class="text-4xl font-black text-amber-500 font-orbitron mt-2">0</p>
+            </div>
+            <div class="p-6 bg-purple-950/10 border border-purple-900/40 rounded-xl">
+                <p class="text-[10px] font-orbitron tracking-widest text-purple-400 font-bold uppercase">Cleared Operator Keys</p>
+                <p id="admin-stat-approved" class="text-4xl font-black text-emerald-500 font-orbitron mt-2">0</p>
+            </div>
+        </div>
+
+        <div class="bg-[#090414]/80 border border-purple-950 p-6 rounded-xl" onclick="event.stopPropagation()">
+            <h3 class="font-orbitron font-bold text-xs text-white tracking-widest mb-6 uppercase border-b border-purple-950 pb-2">GATE SECURITY ACCESS CONTROL</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-purple-950 font-orbitron text-[10px] tracking-widest text-purple-400">
+                            <th class="pb-3 pl-2">IDENTIFICATION PATH ID</th>
+                            <th class="pb-3">SIGNATURE IDENTITY NAME</th>
+                            <th class="pb-3">GATEWAY APPROVAL STANCE</th>
+                            <th class="pb-3 text-right pr-4">OPERATIONAL CRITERIA SWITCH</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body" class="text-xs divide-y divide-purple-950/30 text-gray-300"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="border-t border-purple-950/40 bg-black/60 py-12 px-6 mt-24" onclick="event.stopPropagation()">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="text-center md:text-left">
+                <p class="font-orbitron font-black text-xl text-white tracking-[0.2em]">LUCIVEX</p>
+                <p class="text-[10px] font-mono-tech text-gray-600 mt-2">© 2026 LUCIVEX GLOBAL LABS. INTEGRATED SYSTEM NETWORK PROFILE CONTEXT FLUIDITY.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8 text-xs font-mono-tech">
+                <a href="mailto:lucivex.official@outlook.com" class="text-gray-400 hover:text-purple-400 transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-envelope text-purple-500"></i> lucivex.official@outlook.com
+                </a>
+                <a href="https://instagram.com/lucivex.official" target="_blank" class="text-gray-400 hover:text-purple-400 transition-colors flex items-center gap-2">
+                    <i class="fa-brands fa-instagram text-purple-500"></i> @lucivex.official
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="event.stopPropagation()">
+        <div class="bg-[#090414] border border-purple-500/30 rounded-xl p-8 max-w-sm w-full relative neon-border-purple">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors text-base"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="font-orbitron font-black text-lg text-white tracking-wider text-center uppercase mb-1">SECURE VERIFICATION</h3>
+            <p class="text-[9px] text-purple-400 text-center mb-6 font-mono-tech">[ESTABLISHING SESSION KEY CONNECTION]</p>
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-orbitron font-bold text-gray-400 mb-1 tracking-widest">CORE ROUTE EMAIL ID</label>
+                    <input type="email" id="login-email" required class="w-full bg-black border border-purple-950 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-600 font-mono-tech">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-orbitron font-bold text-gray-400 mb-1 tracking-widest">ACCESS CODE STRING</label>
+                    <input type="password" id="login-pass" required class="w-full bg-black border border-purple-950 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-600 font-mono-tech">
+                </div>
+                <button type="submit" class="w-full bg-purple-800 hover:bg-purple-700 text-white font-orbitron font-bold py-3 rounded text-xs tracking-widest transition-all mt-2">
+                    AUTHENTICATE INTERACTION LINK
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="register-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4" onclick="event.stopPropagation()">
+        <div class="bg-[#090414] border border-purple-500/30 rounded-xl p-8 max-w-sm w-full relative neon-border-purple">
+            <button onclick="closeRegisterModal()" class="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors text-base"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="font-orbitron font-black text-lg text-white tracking-wider text-center uppercase mb-1">NODE ENLISTMENT</h3>
+            <p class="text-[9px] text-amber-500 text-center mb-6 font-mono-tech">[SECURITY FILTER CHECK REQUIRED ON TARGET DATA]</p>
+            <form onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-orbitron font-bold text-gray-400 mb-1 tracking-widest">OPERATOR SIGNATURE NAME</label>
+                    <input type="text" id="reg-name" required class="w-full bg-black border border-purple-950 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-600">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-orbitron font-bold text-gray-400 mb-1 tracking-widest">ROUTING TARGET EMAIL</label>
+                    <input type="email" id="reg-email" required class="w-full bg-black border border-purple-950 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-600 font-mono-tech">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-orbitron font-bold text-gray-400 mb-1 tracking-widest">SECURE NETWORK ACCESS KEY</label>
+                    <input type="password" id="reg-pass" required class="w-full bg-black border border-purple-950 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-purple-600 font-mono-tech">
+                </div>
+                <button type="submit" class="w-full bg-purple-800 hover:bg-purple-700 text-white font-orbitron font-bold py-3 rounded text-xs tracking-widest transition-all mt-2">
+                    SUBMIT ACCESS ENTRY STREAM
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let users = JSON.parse(localStorage.getItem('lvx_db_users')) || [
+            { name: "Lucivex Root Node", email: "lucivex.official@outlook.com", pass: "admin123", approved: true, role: "admin" }
+        ];
+        let personnelData = JSON.parse(localStorage.getItem('lvx_db_personnel')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('lvx_db_current')) || null;
+
+        // Kinematic State Trackers for the Lighted Simple Globe Mechanics
+        const globeElement = document.getElementById('simple-flight-globe');
+        const dockingZone = document.getElementById('globe-docking-zone');
+        let isGlobeInFlight = false;
+        let flightX = 0, flightY = 0;
+        let velocityX = 0, velocityY = 0;
+        let flightInterval = null;
+
+        window.onload = function() {
+            setInitialGlobeHomeDockingPosition();
+            syncDataStateToCache();
+            if (currentUser) { renderCorrectActiveDashboard(); } else { switchSection('home'); }
+        };
+
+        function syncDataStateToCache() {
+            localStorage.setItem('lvx_db_users', JSON.stringify(users));
+            localStorage.setItem('lvx_db_personnel', JSON.stringify(personnelData));
+            localStorage.setItem('lvx_db_current', JSON.stringify(currentUser));
+        }
+
+        function setInitialGlobeHomeDockingPosition() {
+            if (isGlobeInFlight) return;
+            globeElement.style.position = "relative";
+            globeElement.style.left = "0px";
+            globeElement.style.top = "0px";
+            globeElement.style.transform = "translate(0px, 0px)";
+        }
+
+        // GLOBAL CLICK EVENT FLIGHT PROPULSION SYSTEM
+        function deployGlobeWildflight(event) {
+            if (isGlobeInFlight) return;
+            isGlobeInFlight = true;
+
+            clearInterval(flightInterval);
+            const targetBoundingRect = globeElement.getBoundingClientRect();
+            
+            flightX = targetBoundingRect.left;
+            flightY = targetBoundingRect.top;
+            
+            globeElement.style.position = "fixed";
+            globeElement.style.left = flightX + "px";
+            globeElement.style.top = flightY + "px";
+
+            const interactionPointX = event.clientX;
+            const interactionPointY = event.clientY;
+            const centerPointDeltaX = (flightX + targetBoundingRect.width / 2) - interactionPointX;
+            const centerPointDeltaY = (flightY + targetBoundingRect.height / 2) - interactionPointY;
+
+            velocityX = centerPointDeltaX === 0 ? (Math.random() - 0.5) * 35 : (centerPointDeltaX * 0.25) + (Math.random() - 0.5) * 15;
+            velocityY = centerPointDeltaY === 0 ? (Math.random() - 0.5) * 35 : (centerPointDeltaY * 0.25) + (Math.random() - 0.5) * 15;
+
+            if(Math.abs(velocityX) < 12) velocityX = velocityX < 0 ? -16 : 16;
+            if(Math.abs(velocityY) < 12) velocityY = velocityY < 0 ? -16 : 16;
+
+            let frameIndex = 0;
+            const maximumBoundDurationFrames = 130; 
+
+            globeElement.style.transition = "none";
+
+            flightInterval = setInterval(() => {
+                frameIndex++;
+
+                if (frameIndex < maximumBoundDurationFrames) {
+                    flightX += velocityX;
+                    flightY += velocityY;
+
+                    const boundaryWidthMax = window.innerWidth - targetBoundingRect.width;
+                    const boundaryHeightMax = window.innerHeight - targetBoundingRect.height;
+
+                    if (flightX <= 0) { flightX = 0; velocityX *= -1; }
+                    else if (flightX >= boundaryWidthMax) { flightX = boundaryWidthMax; velocityX *= -1; }
+
+                    if (flightY <= 0) { flightY = 0; velocityY *= -1; }
+                    else if (flightY >= boundaryHeightMax) { flightY = boundaryHeightMax; velocityY *= -1; }
+
+                    globeElement.style.left = flightX + "px";
+                    globeElement.style.top = flightY + "px";
+                    globeElement.style.transform = `rotate(${frameIndex * 4}deg) scale(0.95)`;
+                } else {
+                    clearInterval(flightInterval);
+                    
+                    const dockRect = dockingZone.getBoundingClientRect();
+                    const targetReturnX = dockRect.left + (dockRect.width / 2) - (targetBoundingRect.width / 2);
+                    const targetReturnY = dockRect.top + (dockRect.height / 2) - (targetBoundingRect.height / 2);
+
+                    globeElement.style.transition = "all 0.8s cubic-bezier(0.19, 1, 0.22, 1)";
+                    globeElement.style.left = targetReturnX + "px";
+                    globeElement.style.top = targetReturnY + "px";
+                    globeElement.style.transform = "rotate(0deg) scale(1)";
+
+                    setTimeout(() => {
+                        setInitialGlobeHomeDockingPosition();
+                        isGlobeInFlight = false;
+                    }, 820);
+                }
+            }, 16);
+        }
+
+        function switchSection(targetSectionId) {
+            if(currentUser && currentUser.role !== 'admin' && !currentUser.approved) {
+                alert("Security Error: Target Access Prohibited.");
+                return;
+            }
+
+            document.getElementById('section-home').classList.add('hidden');
+            document.getElementById('section-ecosystem').classList.add('hidden');
+            document.getElementById('section-roadmap').classList.add('hidden');
+            document.getElementById('section-dashboard').classList.add('hidden');
+            document.getElementById('section-admin').classList.add('hidden');
+
+            if (targetSectionId === 'home') {
+                document.getElementById('section-home').classList.remove('hidden');
+                document.getElementById('section-ecosystem').classList.remove('hidden');
+                document.getElementById('section-roadmap').classList.remove('hidden');
+                setTimeout(setInitialGlobeHomeDockingPosition, 50);
+            } else if (targetSectionId === 'ecosystem') {
+                document.getElementById('section-ecosystem').classList.remove('hidden');
+            } else if (targetSectionId === 'roadmap') {
+                document.getElementById('section-roadmap').classList.remove('hidden');
+            } else if (targetSectionId === 'dashboard') {
+                document.getElementById('section-dashboard').classList.remove('hidden');
+                renderPersonnelTableData();
+            } else if (targetSectionId === 'admin') {
+                document.getElementById('section-admin').classList.remove('hidden');
+                renderAdminControlTable();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleStructuralCard(cardElement) {
+            const hiddenDesc = cardElement.querySelector('.hidden-desc');
+            const shortDesc = cardElement.querySelector('.short-desc');
+            if(hiddenDesc.classList.contains('hidden')) {
+                hiddenDesc.classList.remove('hidden');
+                shortDesc.classList.add('line-clamp-none');
+                cardElement.classList.add('lg:col-span-2', 'bg-purple-950/20', 'neon-border-purple');
+            } else {
+                hiddenDesc.classList.add('hidden');
+                shortDesc.classList.remove('line-clamp-none');
+                cardElement.classList.remove('lg:col-span-2', 'bg-purple-950/20', 'neon-border-purple');
+            }
+        }
+
+        function openLoginModal() { closeRegisterModal(); document.getElementById('login-modal').classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('login-modal').classList.add('hidden'); }
+        function openRegisterModal() { closeLoginModal(); document.getElementById('register-modal').classList.remove('hidden'); }
+        function closeRegisterModal() { document.getElementById('register-modal').classList.add('hidden'); }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+
+            if(users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+                alert("Operation Intercepted: Signed channel exists.");
+                return;
+            }
+
+            users.push({ name, email, pass, approved: false, role: "employee" });
+            syncDataStateToCache();
+            closeRegisterModal();
+            alert("Registration completed. Access keys pending root administrative node check.");
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            const validatedUser = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.pass === pass);
+
+            if(!validatedUser) {
+                alert("Identity verification mismatch.");
+                return;
+            }
+
+            if(!validatedUser.approved && validatedUser.role !== 'admin') {
+                alert("Access Denied: Pending verification loop updates.");
+                return;
+            }
+
+            currentUser = validatedUser;
+            syncDataStateToCache();
+            closeLoginModal();
+            renderCorrectActiveDashboard();
+        }
+
+        function renderCorrectActiveDashboard() {
+            if(currentUser.role === 'admin') { switchSection('admin'); } 
+            else { document.getElementById('dash-user-name').innerText = currentUser.name; switchSection('dashboard'); }
+        }
+
+        function logout() { currentUser = null; syncDataStateToCache(); switchSection('home'); }
+
+        function addPersonnelRecord(e) {
+            e.preventDefault();
+            const name = document.getElementById('p-name').value;
+            const occupation = document.getElementById('p-occupation').value;
+            const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+
+            personnelData.push({ id: Date.now(), creatorEmail: currentUser.email, name, occupation, timestamp });
+            syncDataStateToCache();
+            document.getElementById('personnel-form').reset();
+            renderPersonnelTableData();
+        }
+
+        function renderPersonnelTableData() {
+            const tbody = document.getElementById('personnel-table-body');
+            const placeholderNotice = document.getElementById('no-personnel-notice');
+            const visibleSubset = personnelData.filter(item => item.creatorEmail === currentUser.email);
+            
+            tbody.innerHTML = '';
+            if(visibleSubset.length === 0) { placeholderNotice.classList.remove('hidden'); return; }
+            placeholderNotice.classList.add('hidden');
+
+            visibleSubset.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-purple-950/20 hover:bg-purple-950/5 transition-colors";
+                tr.innerHTML = `<td class="py-4 pl-2 font-bold text-white">${p.name}</td><td class="py-4"><span class="border border-purple-900/60 bg-purple-950/40 font-mono-tech px-2.5 py-1 rounded text-purple-300 font-bold">${p.occupation}</span></td><td class="py-4 text-gray-500 font-mono-tech text-[11px]">${p.timestamp}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function shareDashboardDataToGmail() {
+            const visibleSubset = personnelData.filter(item => item.creatorEmail === currentUser.email);
+            if(visibleSubset.length === 0) { alert("Data Export Error: No stream elements log found."); return; }
+            let bodyMatrixString = `LUCIVEX CREATOR HUB STREAM RECORDS EXPORT\n=========================================\n\n`;
+            visibleSubset.forEach((p, index) => {
+                bodyMatrixString += `[ENTRY ${index+1}]\nOperator Key Name: ${p.name}\nAssigned Layer: ${p.occupation}\nSystem Commit Timestamp: ${p.timestamp}\n\n`;
+            });
+            window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=lucivex.official@outlook.com&su=${encodeURIComponent("LUCIVEX NODE DATA EXPORT")}&body=${encodeURIComponent(bodyMatrixString)}`;
+        }
+
+        function renderAdminControlTable() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+            const generalStaffNodes = users.filter(u => u.role !== 'admin');
+            
+            document.getElementById('admin-stat-accounts').innerText = generalStaffNodes.length;
+            document.getElementById('admin-stat-pending').innerText = generalStaffNodes.filter(u => !u.approved).length;
+            document.getElementById('admin-stat-approved').innerText = generalStaffNodes.filter(u => u.approved).length;
+
+            if(generalStaffNodes.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-gray-600 font-mono-tech">[NO DATA NODES EXPOSED IN CORE FILTER MEMORY]</td></tr>`;
+                return;
+            }
+
+            generalStaffNodes.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-purple-950/20 hover:bg-purple-950/5 transition-colors";
+                const gateBadge = u.approved ? `<span class="text-[10px] bg-emerald-950/50 text-emerald-400 border border-emerald-900/60 px-2 py-0.5 rounded font-mono-tech font-bold">GATE: CLEARED</span>` : `<span class="text-[10px] bg-amber-950/50 text-amber-400 border border-amber-900/60 px-2 py-0.5 rounded font-mono-tech font-bold">GATE: LOCKED</span>`;
+                const systemActionButton = u.approved ? `<button onclick="adjustGateClearance('${u.email}', false)" class="text-[10px] bg-red-950/40 border border-red-900/50 text-red-400 hover:bg-red-900 px-3 py-1.5 rounded font-bold font-orbitron tracking-wider transition-all">REVOKE</button>` : `<button onclick="adjustGateClearance('${u.email}', true)" class="text-[10px] bg-purple-900 text-white hover:bg-purple-700 px-3 py-1.5 rounded font-bold font-orbitron tracking-wider transition-all">APPROVE</button>`;
+                tr.innerHTML = `<td class="py-4 pl-2 font-mono-tech text-purple-300">${u.email}</td><td class="py-4 font-bold text-white">${u.name}</td><td class="py-4">${gateBadge}</td><td class="py-4 text-right pr-4">${systemActionButton}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function adjustGateClearance(userEmailTarget, evaluationState) {
+            const idx = users.findIndex(u => u.email.toLowerCase() === userEmailTarget.toLowerCase());
+            if(idx !== -1) { users[idx].approved = evaluationState; syncDataStateToCache(); renderAdminControlTable(); }
+        }
+    </script>
+</body>
+</html>
